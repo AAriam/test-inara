@@ -1,0 +1,31 @@
+on: workflow_dispatch
+jobs:
+  open-journals:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        journal: [ joss, jose, resciencec ]
+    steps:
+      - name: Repository Checkout
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ fromJSON(inputs.config).repository }}
+          ref: ${{ fromJSON(inputs.config).ref }}
+      - name: Build
+        uses: docker://openjournals/inara:latest
+        env:
+          JOURNAL: ${{ matrix.journal }}
+        with:
+          args: -o pdf,jats,html,crossref,cff,preprint joss/paper.md
+      - run: |
+          find .
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: paper
+          # This is the output path where Pandoc will write the compiled
+          # PDF. Note, this should be the same directory as the input
+          # paper.md
+          path: joss
+        

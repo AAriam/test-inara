@@ -30,7 +30,7 @@ jobs:
         env:
           JOURNAL: ${{ matrix.journal }}
         with:
-          args: -o -p pdf,jats,html,crossref,cff,preprint joss/paper.md
+          args: -o -p joss/paper.md
       - run: |
           find .
       - name: Upload

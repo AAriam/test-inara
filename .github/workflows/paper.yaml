@@ -9,9 +9,6 @@ jobs:
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
-        with:
-          repository: ${{ fromJSON(inputs.config).repository }}
-          ref: ${{ fromJSON(inputs.config).ref }}
       - name: Build
         uses: docker://openjournals/inara:latest
         env:

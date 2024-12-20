@@ -14,7 +14,7 @@ jobs:
         env:
           JOURNAL: ${{ matrix.journal }}
         with:
-          args: -o pdf joss/paper.md
+          args: -o pdf,docx,native,tex,shared,contextpdf joss/paper.md
       - run: |
           find .
       - name: Upload

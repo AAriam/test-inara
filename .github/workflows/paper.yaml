@@ -56,6 +56,7 @@ jobs:
           # Convert the variables into arrays
           before=($before)
           after=($after)
+          printf "%s\n" "$multi_line"
           echo "Before: $before"
           echo "After: $after"
           # Find new items
@@ -65,7 +66,7 @@ jobs:
               new_items+=("$item")
             fi
           done
-          echo "New: $new_items"
+          printf "%s\n" "$new_items"
           # Move new items
           mkdir -p output
           for new_item in "${new_items[@]}"; do

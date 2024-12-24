@@ -70,7 +70,7 @@ jobs:
           printf "%s\n" "${new_items[@]}"
           # Move new items
           mkdir -p output
-          sudo chown -R runner:docker "$dirpath"
+          sudo chown -R runner:docker "repo/$dirpath"
           for new_item in "${new_items[@]}"; do
             echo "Moving $new_item"
             mv "$new_item" output

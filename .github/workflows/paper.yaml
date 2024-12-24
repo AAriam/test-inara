@@ -23,13 +23,13 @@ jobs:
         id: loc
         run: |
           dirpath=$(dirname "${{ inputs.filepath }}")
-          echo $dirpath
+          echo "$dirpath"
           echo "dirpath=$dirpath" >> $GITHUB_ENV
       - name: Directory Scan
         id: state-before
         run: |
-          before=$(find repo/$dirpath)
-          echo $before
+          before=$(find "repo/$dirpath")
+          echo "$before"
           echo "before=$before" >> $GITHUB_ENV
       - name: Build
         uses: docker://openjournals/inara:latest
@@ -40,8 +40,8 @@ jobs:
       - name: Directory Scan
         id: state-after
         run: |
-          after=$(find repo/$dirpath)
-          echo $after
+          after=$(find "repo/$dirpath")
+          echo "$after"
           echo "after=$after" >> $GITHUB_ENV
       - name: Identify and move new files and directories
         run: |

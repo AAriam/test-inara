@@ -101,4 +101,16 @@ jobs:
       #     # PDF. Note, this should be the same directory as the input
       #     # paper.md
       #     path: joss
-        
+  wheel-merge:
+    name: Artifact Merge
+    if: ${{ !cancelled() }}
+    needs: [ open-journals ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: paper
+          pattern: paper-*
+          separate-directories: 'true'
+          delete-merged: 'true'

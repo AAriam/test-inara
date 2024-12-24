@@ -19,10 +19,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: repo
+      - name: Directory Location
+        id: loc
+        run: |
+          dirpath=$(dirname "${{ inputs.filepath }}")
+          echo $dirpath
+          echo "dirpath=$dirpath" >> $GITHUB_ENV
       - name: Directory Scan
         id: state-before
         run: |
-          before=$(find repo/${{ inputs.filepath }})
+          before=$(find repo/$dirpath)
           echo $before
           echo "before=$before" >> $GITHUB_ENV
       - name: Build
@@ -34,7 +40,7 @@ jobs:
       - name: Directory Scan
         id: state-after
         run: |
-          after=$(find repo/${{ inputs.filepath }})
+          after=$(find repo/$dirpath)
           echo $after
           echo "after=$after" >> $GITHUB_ENV
       - name: Identify and move new files and directories

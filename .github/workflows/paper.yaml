@@ -70,6 +70,7 @@ jobs:
           printf "%s\n" "${new_items[@]}"
           # Move new items
           mkdir -p output
+          ls -ld repo/joss/jats output
           for new_item in "${new_items[@]}"; do
             echo "Moving $new_item"
             mv "$new_item" output

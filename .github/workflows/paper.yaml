@@ -64,7 +64,9 @@ jobs:
           echo "${output_paths[@]}"
           {
             echo 'output_paths<<EOF'
-            echo ${output_paths[@]}
+            for item in "${output_paths[@]}"; do
+              echo "$item"
+            done
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Artifact Generation

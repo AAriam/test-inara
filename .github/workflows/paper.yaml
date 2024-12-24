@@ -66,7 +66,8 @@ jobs:
               new_items+=("$item")
             fi
           done
-          printf "%s\n" "$new_items"
+          echo "To Move:"
+          printf "%s\n" "${new_items[@]}"
           # Move new items
           mkdir -p output
           for new_item in "${new_items[@]}"; do

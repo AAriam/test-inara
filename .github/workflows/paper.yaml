@@ -25,7 +25,7 @@ jobs:
           dirpath=$(dirname "${{ inputs.filepath }}")
           echo "$dirpath"
           echo "dirpath=$dirpath" >> $GITHUB_ENV
-      - name: Directory Scan
+      - name: Directory Pre-Scan
         id: state-before
         run: |
           before=$(find "repo/$dirpath")
@@ -41,7 +41,7 @@ jobs:
           JOURNAL: ${{ matrix.journal }}
         with:
           args: -o ${{ matrix.output }} repo/${{ inputs.filepath }}
-      - name: Directory Scan
+      - name: Directory Post-Scan
         id: state-after
         run: |
           after=$(find "repo/$dirpath")
@@ -51,29 +51,34 @@ jobs:
             echo $after
             echo EOF
           } >> "$GITHUB_ENV"
-      - name: Identify and move new files and directories
+      - name: Output Identification
         run: |
-          # Convert the variables into arrays
           before=($before)
           after=($after)
-          printf "%s\n" "$multi_line"
-          echo "Before: $before"
-          echo "After: $after"
-          # Find new items
-          new_items=()
+          output_paths=()
           for item in "${after[@]}"; do
             if [[ ! " ${before[@]} " =~ " $item " ]]; then
-              new_items+=("$item")
+              output_paths+=("$item")
             fi
           done
-          echo "To Move:"
-          printf "%s\n" "${new_items[@]}"
-          # Move new items
+          printf "%s\n" "${output_paths[@]}"
+          {
+            echo 'output_paths<<EOF'
+            echo $output_paths
+            echo EOF
+          } >> "$GITHUB_ENV"
+      - name: Artifact Generation
+        run: |          
           mkdir -p output
           sudo chown -R runner:docker "repo/$dirpath"
-          for new_item in "${new_items[@]}"; do
+          for new_item in "${output_paths[@]}"; do
+            # Check if the parent directory has already been moved
+            if [[ ! -e "$new_item" ]]; then
+              echo "Skipping $new_item: already moved as part of its parent directory."
+              continue
+            fi
             echo "Moving $new_item"
-            mv "$new_item" output
+            mv "$new_item" output/
           done
       - name: Upload
         uses: actions/upload-artifact@v4

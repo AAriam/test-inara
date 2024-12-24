@@ -30,7 +30,11 @@ jobs:
         run: |
           before=$(find "repo/$dirpath")
           echo "$before"
-          echo "before=$before" >> $GITHUB_ENV
+          {
+            echo 'before<<EOF'
+            echo $before
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Build
         uses: docker://openjournals/inara:latest
         env:
@@ -42,7 +46,11 @@ jobs:
         run: |
           after=$(find "repo/$dirpath")
           echo "$after"
-          echo "after=$after" >> $GITHUB_ENV
+          {
+            echo 'after<<EOF'
+            echo $after
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Identify and move new files and directories
         run: |
           # Convert the variables into arrays

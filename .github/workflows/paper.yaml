@@ -1,4 +1,11 @@
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      filepath:
+        description: Path to the Markdown paper file.
+        required: true
+        type: string
+        default: joss/paper.md
 jobs:
   open-journals:
     runs-on: ubuntu-latest
@@ -6,39 +13,61 @@ jobs:
       fail-fast: false
       matrix:
         journal: [ joss, jose, resciencec ]
+        output: [ pdf,jats,html,crossref,cff,preprint,docx,native,tex,shared,contextpdf ]
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
+        with:
+          path: repo
+      - name: Directory Scan
+        id: state-before
+        run: echo "before=$(find repo/${{ inputs.filepath }})" >> $GITHUB_ENV
       - name: Build
         uses: docker://openjournals/inara:latest
         env:
           JOURNAL: ${{ matrix.journal }}
         with:
-          args: -o pdf,docx,native,tex,shared,contextpdf joss/paper.md
-      - run: |
-          find .
+          args: -o ${{ matrix.output }} repo/${{ inputs.filepath }}
+      - name: Directory Scan
+        id: state-after
+        run: echo "after=$(find repo/${{ inputs.filepath }})" >> $GITHUB_ENV
+      - name: Identify and move new files and directories
+        run: |
+          # Convert the variables into arrays
+          before=($before)
+          after=($after)
+          # Find new items
+          new_items=()
+          for item in "${after[@]}"; do
+            if [[ ! " ${before[@]} " =~ " $item " ]]; then
+              new_items+=("$item")
+            fi
+          done
+          # Move new items
+          mkdir -p output
+          for new_item in "${new_items[@]}"; do
+            echo "Moving $new_item"
+            mv "$new_item" output
+          done
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: paper
-          # This is the output path where Pandoc will write the compiled
-          # PDF. Note, this should be the same directory as the input
-          # paper.md
-          path: joss
-      - name: Build
-        uses: docker://openjournals/inara:latest
-        env:
-          JOURNAL: ${{ matrix.journal }}
-        with:
-          args: -p joss/paper.md
-      - run: |
-          find .
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: paper2
-          # This is the output path where Pandoc will write the compiled
-          # PDF. Note, this should be the same directory as the input
-          # paper.md
-          path: joss
+          name: paper-${{matrix.journal}}-${{matrix.output}}
+          path: output
+      # - name: Build
+      #   uses: docker://openjournals/inara:latest
+      #   env:
+      #     JOURNAL: ${{ matrix.journal }}
+      #   with:
+      #     args: -p joss/paper.md
+      # - run: |
+      #     find .
+      # - name: Upload
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: paper2
+      #     # This is the output path where Pandoc will write the compiled
+      #     # PDF. Note, this should be the same directory as the input
+      #     # paper.md
+      #     path: joss
         

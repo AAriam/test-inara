@@ -21,7 +21,10 @@ jobs:
           path: repo
       - name: Directory Scan
         id: state-before
-        run: echo "before=$(find repo/${{ inputs.filepath }})" >> $GITHUB_ENV
+        run: |
+          before=$(find repo/${{ inputs.filepath }})
+          echo $before
+          echo "before=$before" >> $GITHUB_ENV
       - name: Build
         uses: docker://openjournals/inara:latest
         env:
@@ -30,12 +33,17 @@ jobs:
           args: -o ${{ matrix.output }} repo/${{ inputs.filepath }}
       - name: Directory Scan
         id: state-after
-        run: echo "after=$(find repo/${{ inputs.filepath }})" >> $GITHUB_ENV
+        run: |
+          after=$(find repo/${{ inputs.filepath }})
+          echo $after
+          echo "after=$after" >> $GITHUB_ENV
       - name: Identify and move new files and directories
         run: |
           # Convert the variables into arrays
           before=($before)
           after=($after)
+          echo "Before: $before"
+          echo "After: $after"
           # Find new items
           new_items=()
           for item in "${after[@]}"; do
@@ -43,6 +51,7 @@ jobs:
               new_items+=("$item")
             fi
           done
+          echo "New: $new_items"
           # Move new items
           mkdir -p output
           for new_item in "${new_items[@]}"; do

@@ -71,8 +71,8 @@ jobs:
         run: |          
           mkdir -p output
           sudo chown -R runner:docker "repo/$dirpath"
-          IFS=$'\n' read -r -d '' -a output_paths_array <<< "$output_paths"
-          for new_item in "${output_paths_array[@]}"; do
+          output_paths=($output_paths)
+          for new_item in "${output_paths[@]}"; do
             # Check if the parent directory has already been moved
             if [[ ! -e "$new_item" ]]; then
               echo "Skipping $new_item: already moved as part of its parent directory."

@@ -55,18 +55,16 @@ jobs:
         run: |
           before=($before)
           after=($after)
-          output_paths=()
+          output_paths=""
           for item in "${after[@]}"; do
             if [[ ! " ${before[@]} " =~ " $item " ]]; then
-              output_paths+=("$item")
+              output_paths+="$item"$'\n'
             fi
           done
-          echo "${output_paths[@]}"
+          echo "$output_paths"
           {
             echo 'output_paths<<EOF'
-            for item in "${output_paths[@]}"; do
-              echo "$item"
-            done
+            echo $output_paths
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Artifact Generation

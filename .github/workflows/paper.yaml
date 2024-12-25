@@ -42,6 +42,7 @@ jobs:
           for var_name in pdf jats html docs tex; do
             env_var_name="INPUT_${var_name^^}"
             value="${!env_var_name}" 
+            echo "$env_var_name : $value"
             if [[ "$value" == "true" ]]; then
               output_args+=("-o $var_name")
             fi

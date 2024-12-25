@@ -47,33 +47,35 @@ jobs:
       - name: Directory Pre-Scan
         id: state-before
         run: |
-          before=$(find "repo/$dirpath")
-          echo "$before"
+          files_before=$(find "repo/$dirpath")
+          echo "$files_before"
           {
-            echo 'before<<EOF'
-            echo $before
+            echo 'files_before<<EOF'
+            echo $files_before
             echo EOF
           } >> "$GITHUB_ENV"
+      - name: Journal Determination
+        run: |
+          journal=$(echo "${{ inputs.journal }}" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+          echo "JOURNAL=$journal" >> $GITHUB_ENV
       - name: Build
         uses: docker://openjournals/inara:latest
-        env:
-          JOURNAL: ${{ inputs.journal }}
         with:
           args: -o ${{ matrix.output }} repo/${{ inputs.filepath }}
       - name: Directory Post-Scan
         id: state-after
         run: |
-          after=$(find "repo/$dirpath")
-          echo "$after"
+          files_after=$(find "repo/$dirpath")
+          echo "$files_after"
           {
-            echo 'after<<EOF'
-            echo $after
+            echo 'files_after<<EOF'
+            echo $files_after
             echo EOF
           } >> "$GITHUB_ENV"
       - name: Output Identification
         run: |
-          before=($before)
-          after=($after)
+          before=($files_before)
+          after=($files_after)
           output_paths=""
           for item in "${after[@]}"; do
             if [[ ! " ${before[@]} " =~ " $item " ]]; then

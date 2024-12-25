@@ -135,7 +135,7 @@ jobs:
           name="paper
           - ${{ inputs.repository || github.repository }}
           - $(git branch --show-current)
-          - $(git describe)
+          - $(git describe --long --always)
           - ${{ inputs.filepath }}
           - ${{ inputs.journal }}"
           

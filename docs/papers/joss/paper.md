@@ -63,17 +63,21 @@ of the software and places it in the context of related work.
 # Other Section
 
 Figures can be included like this:
-![This is the caption of the figure.\label{fig:my-fig-label}](../full_light.png){ width=50% }
-and referenced from text using \autoref{fig:my-fig-label}.
+
+![This is the caption of the figure.\label{fig:example}](../full_light.png){ width=50% }
+
+and referenced from text using \autoref{fig:example}.
 
 Single dollars `$` are required for inline mathematics e.g. $f(x) = e^{\pi/x}$.
 
 Double dollars make self-standing equations:
 
-$$\Theta(x) = \left\{\begin{array}{l}
+$$
+\Theta(x) = \left\{\begin{array}{l}
 0\textrm{ if } x < 0\cr
 1\textrm{ else}
-\end{array}\right.$$
+\end{array}\right.
+$$
 
 You can also use plain \LaTeX for equations:
 

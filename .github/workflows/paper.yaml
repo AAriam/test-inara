@@ -38,11 +38,11 @@ jobs:
       - name: Build Types
         id: process
         run: |
+          echo '${{ toJSON(inputs) }}' > inputs.json
           output_args=()
           for var_name in pdf jats html docs tex; do
-            env_var_name="INPUT_${var_name^^}"
-            value="${!env_var_name}" 
-            echo "$env_var_name : $value"
+            value=$(jq -r ".${var_name}" inputs.json)
+            echo "$var_name : $value"
             if [[ "$value" == "true" ]]; then
               output_args+=("-o $var_name")
             fi

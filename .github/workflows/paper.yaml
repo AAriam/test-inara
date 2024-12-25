@@ -139,5 +139,11 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: paper
+          name: >-
+            paper
+            - ${{ inputs.repository || github.repository }}
+            - ${{ inputs.ref || github.ref }}
+            - ${{ inputs.filepath }}
+            - ${{ inputs.journal }}
+            - ${{ matrix.output.name }}
           path: ${{ env.UPLOAD_PATHS }}

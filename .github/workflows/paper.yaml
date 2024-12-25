@@ -47,7 +47,7 @@ jobs:
             fi
           done
           # Convert the array to a JSON string (GitHub Actions doesn't support arrays directly)
-          output_args_json=$(printf '%s\n' "${output_args[@]}" | jq -R . | jq -s .)
+          output_args_json=$(printf '%s\n' "${output_args[@]}" | jq -R . | jq -s -c .)
           echo "Matrix array: $output_args_json"
 
           # Set the output for the job

@@ -62,36 +62,103 @@ of the software and places it in the context of related work.
 
 # Other Section
 
+## Markdown
+
+Inline markup in Markdown should be semantic, not presentations.
+It can be used to make *italic*, **bold**, ~~strikethrough~~, ~sub~script, ^super^script,
+[underline]{.ul}, [Small Caps]{.sc}, and `inline code`.
+
+Links can be used like [this](https://example.com).
+
+Lists:
+- apples
+- citrus fruits
+  - lemons
+  - oranges
+
+Ordered lists:
+0. If two systems are each in thermal equilibrium with a third, they are
+   also in thermal equilibrium with each other.
+1. In a process without transfer of matter, the change in internal
+   energy, $\Delta U$, of a thermodynamic system is equal to the energy
+   gained as heat, $Q$, less the thermodynamic work, $W$, done by the
+   system on its surroundings. $$\Delta U = Q - W$$
+
+## Footnotes
+
+Footnotes can be defined anywhere (see end of document) and referenced using [^first-footnote].
+
+
+## Inline Images
+
+Inline images can be used like this ![](../full_light.png){height="9pt"} inside a paragraph.
+
+## Figures
+
 Figures can be included like this:
 
 ![This is the caption of the figure.\label{fig:example}](../full_light.png){ width=50% }
 
-and referenced from text using \autoref{fig:example}.
+and referenced from text using \autoref{fig:example} or \ref{fig:example}.
+
+## Math Equations
 
 Single dollars `$` are required for inline mathematics e.g. $f(x) = e^{\pi/x}$.
 
 Double dollars make self-standing equations:
 
 $$
+\label{eq:theta}
 \Theta(x) = \left\{\begin{array}{l}
 0\textrm{ if } x < 0\cr
 1\textrm{ else}
-\end{array}\right.
+\end{array}
+\right
 $$
+
+and references using \autoref{eq:theta} or \ref{eq:theta}.
+
+Authors who do not wish to include the label directly in the formula
+can use a Markdown span to add the label:
+
+[$$a^n + b^n = c^n$$]{label="eq:fermat"}
+
+These can be referenced the same using \autoref{eq:fermat} or \ref{eq:fermat}.
 
 You can also use plain \LaTeX for equations:
 
-\begin{equation}\label{eq:fourier}
+\begin{equation}
+\label{eq:fourier}
 \hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
 \end{equation}
 
-and refer to \autoref{eq:fourier} from text.
+and reference them using \autoref{eq:fourier} or \ref{eq:fourier}.
 
 For long dashes---like this one---use three hyphens.
 
-authentic tasks leveraging on commonly used Python packages, such as MDAnalysis
-[@michaud-agrawal2011mdanalysis] [@oliver_beckstein-proc-scipy-2016] [@alibay2023building] and 
-scikit-learn [@pedregosa2011scikitlearn]. 
+## Citations
+
+Citations can be used like this [@michaud-agrawal2011mdanalysis] [@oliver_beckstein-proc-scipy-2016] [@alibay2023building],
+or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.  
+
+## Grid Tables
+
++-------------------+------------+----------+----------+
+| Header 1          | Header 2   | Header 3 | Header 4 |
+|                   |            |          |          |
++:=================:+:==========:+:========:+:========:+
+| row 1, column 1   | column 2   | column 3 | column 4 |
++-------------------+------------+----------+----------+
+| row 2             | cells span columns               |
++-------------------+------------+---------------------+
+| row 3             | cells      | - body              |
++-------------------+ span rows  | - elements          |
+| row 4             |            | - here              |
++===================+============+=====================+
+| Footer                                               |
++===================+============+=====================+
+
+## Tables
 
 
 | Session                            | Materials |
@@ -120,3 +187,5 @@ scikit-learn [@pedregosa2011scikitlearn].
 # Acknowledgements
 
 # References
+
+[^first-footnote]: This is a footnote.

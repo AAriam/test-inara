@@ -74,14 +74,18 @@ or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.
 
 For inline math, use single dollars `$`; for example $f(x) = e^{\pi/x}$.
 
-For block math, use '
-
-Double dollars make self-standing equations:
+For block math, use double dollars:
 
 $$a^n + b^n = c^n \label{eq:fermat}$$
 
-and references using \autoref{eq:fermat} or \ref{eq:fermat}.
+Math blocks can be referenced using \autoref{eq:fermat} or \ref{eq:fermat}.
 
+Authors who do not wish to include the label directly in the formula
+can use a Markdown span to add the label:
+
+[$$a^n + b^n = c^n$$]{label="eq:fermat2"}
+
+These can be referenced the same using \autoref{eq:fermat2} or \ref{eq:fermat2}.
 
 You can also use plain \LaTeX for equations:
 

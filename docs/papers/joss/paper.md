@@ -70,9 +70,45 @@ your paper can also contain other main sections and sub-sections.
 Citations can be used like this [@michaud-agrawal2011mdanalysis] [@oliver_beckstein-proc-scipy-2016] [@alibay2023building],
 or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.
 
+## Math Equations
+
+Single dollars `$` are required for inline mathematics e.g. $f(x) = e^{\pi/x}$.
+
+Double dollars make self-standing equations:
+
+$$
+\label{eq:theta}
+\Theta(x) = \left\{\begin{array}{l}
+0\textrm{ if } x < 0\cr
+1\textrm{ else}
+\end{array}
+\right
+$$
+
+and references using \autoref{eq:theta} or \ref{eq:theta}.
+
+Authors who do not wish to include the label directly in the formula
+can use a Markdown span to add the label:
+
+[$$a^n + b^n = c^n$$]{label="eq:fermat"}
+
+These can be referenced the same using \autoref{eq:fermat} or \ref{eq:fermat}.
+
+You can also use plain \LaTeX for equations:
+
+\begin{equation}
+\label{eq:fourier}
+\hat f(\omega) = \int_{-\infty}^{\infty} f(x) e^{i\omega x} dx
+\end{equation}
+
+and reference them using \autoref{eq:fourier} or \ref{eq:fourier}.
+
+
 ## Markdown
 
 Links can be used like [this](https://example.com).
+
+For long dashes---like this one---use three hyphens.
 
 ### Inline Markup
 

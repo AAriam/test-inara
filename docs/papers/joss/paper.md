@@ -62,37 +62,6 @@ of the software and places it in the context of related work.
 
 # Other Section
 
-## Markdown
-
-Inline markup in Markdown should be semantic, not presentations.
-It can be used to make *italic*, **bold**, ~~strikethrough~~, ~sub~script, ^super^script,
-[underline]{.ul}, [Small Caps]{.sc}, and `inline code`.
-
-Links can be used like [this](https://example.com).
-
-Lists:
-- apples
-- citrus fruits
-  - lemons
-  - oranges
-
-Ordered lists:
-0. If two systems are each in thermal equilibrium with a third, they are
-   also in thermal equilibrium with each other.
-1. In a process without transfer of matter, the change in internal
-   energy, $\Delta U$, of a thermodynamic system is equal to the energy
-   gained as heat, $Q$, less the thermodynamic work, $W$, done by the
-   system on its surroundings. $$\Delta U = Q - W$$
-
-## Footnotes
-
-Footnotes can be defined anywhere (see end of document) and referenced using [^first-footnote].
-
-
-## Inline Images
-
-Inline images can be used like this ![](../full_light.png){height="9pt"} inside a paragraph.
-
 ## Figures
 
 Figures can be included like this:

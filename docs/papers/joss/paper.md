@@ -104,6 +104,26 @@ Figures can be included like this:
 
 and referenced from text using \autoref{fig:example} or \ref{fig:example}.
 
+### Grid Tables
+
+You can include grid tables like this:
+
++-------------------+------------+----------+----------+
+| Header 1          | Header 2   | Header 3 | Header 4 |
+|                   |            |          |          |
++:=================:+:==========:+:========:+:========:+
+| row 1, column 1   | column 2   | column 3 | column 4 |
++-------------------+------------+----------+----------+
+| row 2             | cells span columns               |
++-------------------+------------+---------------------+
+| row 3             | cells      | - body              |
++-------------------+ span rows  | - elements          |
+| row 4             |            | - here              |
++===================+============+=====================+
+| Footer                                               |
++===================+============+=====================+
+
+
 ### Footnotes
 
 Footnotes can be defined anywhere (see end of document) and referenced using [^first-footnote].

@@ -28,6 +28,8 @@ jobs:
   build:
     name: ${{ matrix.output.name }}
     runs-on: ubuntu-latest
+    outputs:
+      artifact-base-name: ${{ steps.artifact-name-gen.outputs.artifact_base_name }}
     strategy:
       fail-fast: false
       matrix:
@@ -136,16 +138,20 @@ jobs:
             echo "$upload_paths"
             echo EOF
           } >> "$GITHUB_ENV"
+      - name: Artifact Name Generation
+        id: artifact-name-gen
+        run: >-
+          name="paper
+          - ${{ inputs.repository || github.repository }}
+          - ${{ inputs.ref || github.ref }}
+          - ${{ inputs.filepath }}
+          - ${{ inputs.journal }}"
+          name_normalized=$(echo "$name" | tr '":<>|*?\/' '-')
+          echo "artifact_base_name=$name_normalized" >> $GITHUB_OUTPUT
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: >-
-            paper
-            - ${{ inputs.repository || github.repository }}
-            - ${{ inputs.ref || github.ref }}
-            - ${{ inputs.filepath }}
-            - ${{ inputs.journal }}
-            - ${{ matrix.output.name }}
+          name: ${{ steps.articat-name-gen.outputs.artifact_base_name }} - ${{ matrix.output.name }}
           path: ${{ env.UPLOAD_PATHS }}
   wheel-merge:
     name: Artifact Merge
@@ -157,12 +163,6 @@ jobs:
         uses: actions/upload-artifact/merge@v4
         with:
           name: paper
-          pattern: >-
-            paper
-            - ${{ inputs.repository || github.repository }}
-            - ${{ inputs.ref || github.ref }}
-            - ${{ inputs.filepath }}
-            - ${{ inputs.journal }}
-            - *
+          pattern: ${{ needs.build.outputs.artifact-base-name }} - *
           separate-directories: 'false'
           delete-merged: 'true'

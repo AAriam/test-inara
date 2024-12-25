@@ -1,4 +1,7 @@
 name: Open Journals Paper Build
+run-name: >-
+  Paper (${{ inputs.journal }}):
+  ${{ inputs.repository || github.repository }}/${{ inputs.ref || github.ref }}/${{ inputs.filepath }}
 on:
   workflow_dispatch:
     inputs:
@@ -16,6 +19,10 @@ on:
           - JOSS
           - JOSE
           - ReScience C
+      artifact:
+        description: Artifact name
+        required: false
+        type: string
       ref:
         description: Git reference
         required: false
@@ -105,7 +112,8 @@ jobs:
           echo "$journal"
           echo "JOURNAL=$journal" >> $GITHUB_ENV
       - name: Build
-        uses: docker://openjournals/inara:latest
+        uses: docker://openjournals/inara:latest  # https://github.com/openjournals/inara
+                                                  # https://github.com/openjournals/openjournals-draft-action
         with:
           args: ${{ matrix.output.arg }} ${{ inputs.filepath }}
       - name: Output Rename
@@ -126,11 +134,12 @@ jobs:
         run: >-
           name="paper
           - ${{ inputs.repository || github.repository }}
-          - ${{ inputs.ref || github.ref }}
+          - $(git branch --show-current)
+          - $(git describe)
           - ${{ inputs.filepath }}
           - ${{ inputs.journal }}"
           
-          name_normalized=$(echo "$name" | tr '":<>|*?\/' '-')
+          name_normalized=$(echo "$name" | tr '":<>|*?\/' '_')
           
           echo "artifact_base_name=$name_normalized" >> $GITHUB_OUTPUT
       - name: Artifact Filepath Determination
@@ -156,7 +165,7 @@ jobs:
         with:
           name: ${{ steps.artifact-name-gen.outputs.artifact_base_name }} - ${{ matrix.output.name }}
           path: ${{ env.UPLOAD_PATHS }}
-  wheel-merge:
+  artifact-merge:
     name: Artifact Merge
     if: ${{ !cancelled() }}
     needs: [ build ]
@@ -165,7 +174,7 @@ jobs:
       - name: Merge
         uses: actions/upload-artifact/merge@v4
         with:
-          name: ${{ needs.build.outputs.artifact-base-name }}
+          name: ${{ inputs.artifact || needs.build.outputs.artifact-base-name }}
           pattern: ${{ needs.build.outputs.artifact-base-name }} - *
           separate-directories: 'false'
           delete-merged: 'true'

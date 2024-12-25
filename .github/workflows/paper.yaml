@@ -115,7 +115,7 @@ jobs:
         uses: docker://openjournals/inara:latest  # https://github.com/openjournals/inara
                                                   # https://github.com/openjournals/openjournals-draft-action
         with:
-          args: ${{ matrix.output.arg }} -vvv ${{ inputs.filepath }}
+          args: ${{ matrix.output.arg }} -v ${{ inputs.filepath }}
       - name: Output Rename
         run: |
           output_json='${{ toJSON(matrix.output) }}'

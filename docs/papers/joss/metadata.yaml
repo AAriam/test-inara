@@ -1,33 +1,32 @@
 ---
-title: 'A course on the setup, running, and analysis of biomolecular simulations'
+title: 'Article Writing with Markdown and the Open Journals publishing pipeline'
 tags:
-  - molecular simulation
-  - python
-  - graduate level
+  - reference
+  - example
+  - markdown
+  - publishing
+languages:
+  - Markdown
 authors:
-  - name: Matteo T. Degiacomi
-    orcid: 0000-0003-4672-471X
-    affiliation: "1, 2"
-  - name: Richard J. Gowers
-    orcid: 0000-0002-3241-1846
-    affiliation: "3"
-  - name: Micaela Matta
-    orcid: 0000-0002-9852-3154
-    affiliation: "4"
-  - name: Antonia S. J. S. Mey
-    orcid: 0000-0001-7512-5252
-    affiliation: "2"
+  - Albert Krewinkel
+  - Juanjo Bazán
+  - Arfon M. Smith
+doi: '10.21105/joss.00000'
+software_repository_url: 'https://github.com/openjournals/inara'
+review_issue_id: '00000'
+review_editor: 'Jane Q. Doe'
+reviewers:
+  - '@SingleSourcePub'
+  - '@IlonaSilverwood'
+volume: '0'
+issue: '5'
+year: '2020'
+page: '00000'
+journal_alias: 'JOSS'
+journal_name: 'Journal of Open Source Software'
+software_review_url: 'https://github.com/openjournals/inara/issues'
+archive_doi: '10.5281/zenodo.00000000'
 
-affiliations:
- - name: School of Informatics, University of Edinburgh, Informatics Forum, 10 Crichton St, Edinburgh EH8 9AB, United Kingdom
-   index: 1
- - name: EaStCHEM School of Chemistry, University of Edinburgh, Joseph Black Building, David Brewster Road, Edinburgh, EH9 3FJ, United Kingdom
-   index: 2
- - name: CHARM Therapeutics Ltd, 7 Pancras Square, London, N1C 4AG
-   index: 3
- - name: Department of Chemistry, King's College London, London, SE1 1DB, United Kingdom
-   index: 4
-
-
-date: 11 November 2024
+submitted_at: '2020-01-01'
+published_at: '2020-05-23'
 ---

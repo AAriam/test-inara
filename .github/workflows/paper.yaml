@@ -7,84 +7,36 @@ on:
         required: true
         type: string
         default: joss/paper.md
-      pdf-production:
-        description: PDF (final)
-        type: boolean
+      journal:
+        description: Journal
         required: true
-      pdf:
-        description: PDF (draft)
-        type: boolean
-        required: true
-      contextpdf:
-        description: PDF (context)
-        type: boolean
-        required: true
-      tex:
-        description: TeX (final)
-        type: boolean
-        required: true
-      preprint:
-        description: TeX (draft)
-        type: boolean
-        required: true
-      docx:
-        description: DOCX
-        type: boolean
-        required: true
-      jats:
-        description: JATS
-        type: boolean
-        required: true
-      html:
-        description: HTML
-        type: boolean
-        required: true
-      crossref:
-        description: CrossRef
-        type: boolean
-        required: true
-      cff:
-        description: CFF
-        type: boolean
-        required: true
-
+        default: JOSS
+        type: choice
+        options:
+          - JOSS
+          - JOSE
+          - ReScience C
+      ref:
+        description: Git reference
+        required: false
+        type: string
+      repository:
+        description: GitHub repository
+        required: false
+        type: string
 jobs:
-  preprocess:
-    name: Input Processing
-    runs-on: ubuntu-latest
-    outputs:
-      output_args: ${{ steps.process.outputs.output_args }}
-    steps:
-      - name: Build Types
-        id: process
-        run: |
-          echo '${{ toJSON(inputs) }}' > inputs.json
-          output_args=()
-          for var_name in pdf contextpdf tex preprint docx jats html crossref cff; do
-            value=$(jq -r ".${var_name}" inputs.json)
-            echo "$var_name : $value"
-            if [[ "$value" == "true" ]]; then
-              output_args+=("-o $var_name")
-            fi
-          done
-          # Convert the array to a JSON string (GitHub Actions doesn't support arrays directly)
-          output_args_json=$(printf '%s\n' "${output_args[@]}" | jq -R . | jq -s -c .)
-          echo "Matrix array: $output_args_json"
-
-          # Set the output for the job
-          echo "output_args=$output_args_json" >> $GITHUB_ENV
   build:
     runs-on: ubuntu-latest
-    needs: preprocess
     strategy:
       fail-fast: false
       matrix:
-        journal: [ joss, jose, resciencec ]
-        output: ${{ fromJSON(needs.preprocess.outputs.output_args) }}
+        output: [ pdf, contextpdf, tex, preprint, docx, jats, html, crossref, cff ]
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
         with:
+          repository: ${{ inputs.repository || github.repository }}
+          ref: ${{ inputs.ref || github.ref }}
           path: repo
       - name: Directory Location
         id: loc
@@ -105,7 +57,7 @@ jobs:
       - name: Build
         uses: docker://openjournals/inara:latest
         env:
-          JOURNAL: ${{ matrix.journal }}
+          JOURNAL: ${{ inputs.journal }}
         with:
           args: -o ${{ matrix.output }} repo/${{ inputs.filepath }}
       - name: Directory Post-Scan
@@ -153,13 +105,13 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: paper-${{matrix.journal}}-${{matrix.output}}
+          name: paper-${{matrix.output}}
           path: output
       
   wheel-merge:
     name: Artifact Merge
     if: ${{ !cancelled() }}
-    needs: [ open-journals ]
+    needs: [ build ]
     runs-on: ubuntu-latest
     steps:
       - name: Merge

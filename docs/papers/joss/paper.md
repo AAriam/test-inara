@@ -91,8 +91,12 @@ It can be used to make *italic*, **bold**, ~~strikethrough~~, ~sub~script, ^supe
    gained as heat, $Q$, less the thermodynamic work, $W$, done by the
    system on its surroundings. $$\Delta U = Q - W$$
 
+### Inline Images
 
-## Figures
+Inline images can be used like this ![](../full_light.png){height="9pt"} inside a paragraph.
+
+
+### Figures
 
 Figures can be included like this:
 
@@ -100,6 +104,13 @@ Figures can be included like this:
 
 and referenced from text using \autoref{fig:example} or \ref{fig:example}.
 
+### Footnotes
+
+Footnotes can be defined anywhere (see end of document) and referenced using [^first-footnote].
+
+
 # Acknowledgements
 
 # References
+
+[^first-footnote]: This is a footnote.

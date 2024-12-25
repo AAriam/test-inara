@@ -40,7 +40,8 @@ jobs:
         run: |
           output_args=()
           for var_name in pdf jats html docs tex; do
-            value="${{ inputs.${var_name} }}"
+            env_var_name="INPUT_${var_name^^}"
+            value="${!env_var_name}" 
             if [[ "$value" == "true" ]]; then
               output_args+=("-o $var_name")
             fi

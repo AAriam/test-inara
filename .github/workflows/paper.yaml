@@ -6,7 +6,7 @@ on:
         description: Path to the Markdown paper file.
         required: true
         type: string
-        default: joss/paper.md
+        default: docs/papers/joss/paper.md
       journal:
         description: Journal
         required: true

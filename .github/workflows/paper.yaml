@@ -1,14 +1,14 @@
-name: Open Journals
+name: Open Journals Paper Build
 on:
   workflow_dispatch:
     inputs:
       filepath:
-        description: Path to the Markdown paper file.
+        description: Path to the paper's Markdown file
         required: true
         type: string
         default: docs/papers/joss/paper.md
       journal:
-        description: Journal
+        description: Target journal
         required: true
         default: JOSS
         type: choice
@@ -49,11 +49,11 @@ jobs:
             paths:
               - output: paper.context.pdf
                 renamed: context.pdf
-          - name: LaTeX
+          - name: LaTeX (final)
             arg: -o tex
             paths:
               - output: paper.tex
-          - name: LaTeX (preprint)
+          - name: LaTeX (draft)
             arg: -o preprint
             paths:
               - output: paper.preprint.tex
@@ -102,6 +102,7 @@ jobs:
       - name: Journal Determination
         run: |
           journal=$(echo "${{ inputs.journal }}" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
+          echo "$journal"
           echo "JOURNAL=$journal" >> $GITHUB_ENV
       - name: Build
         uses: docker://openjournals/inara:latest
@@ -120,8 +121,20 @@ jobs:
           done
       - name: Directory Overview
         run: tree $DIRPATH
-      - name: Artifact Generation
-        run: |          
+      - name: Artifact Name Generation
+        id: artifact-name-gen
+        run: >-
+          name="paper
+          - ${{ inputs.repository || github.repository }}
+          - ${{ inputs.ref || github.ref }}
+          - ${{ inputs.filepath }}
+          - ${{ inputs.journal }}"
+          
+          name_normalized=$(echo "$name" | tr '":<>|*?\/' '-')
+          
+          echo "artifact_base_name=$name_normalized" >> $GITHUB_OUTPUT
+      - name: Artifact Filepath Determination
+        run: |
           upload_paths=""
           output_json='${{ toJSON(matrix.output) }}'
           mapfile -t paths < <(echo "$output_json" | jq -c '.paths[]')
@@ -138,19 +151,7 @@ jobs:
             echo "$upload_paths"
             echo EOF
           } >> "$GITHUB_ENV"
-      - name: Artifact Name Generation
-        id: artifact-name-gen
-        run: >-
-          name="paper
-          - ${{ inputs.repository || github.repository }}
-          - ${{ inputs.ref || github.ref }}
-          - ${{ inputs.filepath }}
-          - ${{ inputs.journal }}"
-          
-          name_normalized=$(echo "$name" | tr '":<>|*?\/' '-')
-          
-          echo "artifact_base_name=$name_normalized" >> $GITHUB_OUTPUT
-      - name: Upload
+      - name: Artifact Upload
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.artifact-name-gen.outputs.artifact_base_name }} - ${{ matrix.output.name }}
@@ -164,7 +165,7 @@ jobs:
       - name: Merge
         uses: actions/upload-artifact/merge@v4
         with:
-          name: paper
+          name: ${{ needs.build.outputs.artifact-base-name }}
           pattern: ${{ needs.build.outputs.artifact-base-name }} - *
           separate-directories: 'false'
           delete-merged: 'true'

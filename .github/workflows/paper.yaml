@@ -133,7 +133,7 @@ jobs:
           done
           {
             echo 'UPLOAD_PATHS<<EOF'
-            echo $upload_paths
+            echo "$upload_paths"
             echo EOF
           } >> "$GITHUB_ENV"
       - run: echo "${{ env.UPLOAD_PATHS }}"

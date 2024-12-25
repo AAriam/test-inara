@@ -128,7 +128,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: paper-${{matrix.output}}
+          name: paper-${{matrix.output.name}}
           path: output
       
   wheel-merge:

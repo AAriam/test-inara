@@ -1,3 +1,4 @@
+name: Open Journals
 on:
   workflow_dispatch:
     inputs:
@@ -6,30 +7,49 @@ on:
         required: true
         type: string
         default: joss/paper.md
+      pdf-production:
+        description: PDF (final)
+        type: boolean
+        required: true
       pdf:
-        description: Build draft PDF
+        description: PDF (draft)
         type: boolean
         required: true
-      jats:
-        description: Build JATS
-        type: boolean
-        required: true
-      html:
-        description: Build HTML
-        type: boolean
-        required: true
-      docx:
-        description: Build DOCX
+      contextpdf:
+        description: PDF (context)
         type: boolean
         required: true
       tex:
-        description: Build TeX
+        description: TeX (final)
         type: boolean
         required: true
-        
-      
+      preprint:
+        description: TeX (draft)
+        type: boolean
+        required: true
+      docx:
+        description: DOCX
+        type: boolean
+        required: true
+      jats:
+        description: JATS
+        type: boolean
+        required: true
+      html:
+        description: HTML
+        type: boolean
+        required: true
+      crossref:
+        description: CrossRef
+        type: boolean
+        required: true
+      cff:
+        description: CFF
+        type: boolean
+        required: true
+
 jobs:
-  process-inputs:
+  preprocess:
     name: Input Processing
     runs-on: ubuntu-latest
     outputs:
@@ -40,7 +60,7 @@ jobs:
         run: |
           echo '${{ toJSON(inputs) }}' > inputs.json
           output_args=()
-          for var_name in pdf jats html docs tex; do
+          for var_name in pdf contextpdf tex preprint docx jats html crossref cff; do
             value=$(jq -r ".${var_name}" inputs.json)
             echo "$var_name : $value"
             if [[ "$value" == "true" ]]; then
@@ -53,15 +73,14 @@ jobs:
 
           # Set the output for the job
           echo "output_args=$output_args_json" >> $GITHUB_ENV
-
-  open-journals:
+  build:
     runs-on: ubuntu-latest
-    needs: process-inputs
+    needs: preprocess
     strategy:
       fail-fast: false
       matrix:
         journal: [ joss, jose, resciencec ]
-        output: [ pdf,jats,html,crossref,cff,preprint,docx,tex,contextpdf ]
+        output: ${{ fromJSON(needs.preprocess.outputs.output_args) }}
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4

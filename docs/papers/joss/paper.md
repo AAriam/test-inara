@@ -82,7 +82,7 @@ $$
 0\textrm{ if } x < 0\cr
 1\textrm{ else}
 \end{array}
-\right
+\right.
 $$
 
 and references using \autoref{eq:theta} or \ref{eq:theta}.

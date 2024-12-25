@@ -68,7 +68,7 @@ Figures can be included like this:
 
 ![This is the caption of the figure.\label{fig:example}](../full_light.png){ width=50% }
 
-and referenced from text using \autoref{fig:example}.
+and referenced from text using \autoref{fig:example} or \ref{fig:example}.
 
 # Acknowledgements
 

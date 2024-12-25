@@ -93,7 +93,7 @@ jobs:
           output_json='${{ toJSON(matrix.output) }}'
           echo "$output_json" | jq -c '.paths[]' | while read -r path; do
             output_path=$(echo "$path" | jq -r '.output')
-            rm -rf "$output_path" 2>/dev/null || echo "Path '$output_path' does not exist; skipping removal."
+            rm -rf "${DIRPATH}/${output_path}" 2>/dev/null || echo "Path '${DIRPATH}/${output_path}' does not exist; skipping removal."
           done
       - name: Directory Overview
         run: tree $DIRPATH
@@ -113,7 +113,7 @@ jobs:
               output_path=$(echo "$path" | jq -r '.output')
               new_path=$(echo "$path" | jq -r '.renamed')
               echo "Renaming '$output_path' to '$new_path'"
-              mv "$output_path" "$new_path" 2>/dev/null || echo "Failed to rename $output_path"
+              mv "${DIRPATH}/${output_path}" "${DIRPATH}/${new_path}"
             fi
           done
       - name: Directory Overview
@@ -122,7 +122,8 @@ jobs:
         run: |          
           upload_paths=""
           output_json='${{ toJSON(matrix.output) }}'
-          echo "$output_json" | jq -c '.paths[]' | while read -r path; do
+          mapfile -t paths < <(echo "$output_json" | jq -c '.paths[]')
+          for path in "${paths[@]}"; do
             if echo "$path" | jq -e 'has("renamed")' >/dev/null; then
               upload_path=$(echo "$path" | jq -r '.renamed')
             else
@@ -140,4 +141,3 @@ jobs:
         with:
           name: paper
           path: ${{ env.UPLOAD_PATHS }}
-          

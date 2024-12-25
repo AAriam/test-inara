@@ -26,11 +26,32 @@ on:
         type: string
 jobs:
   build:
+    name: ${{ matrix.output }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        output: [ pdf, contextpdf, tex, preprint, docx, jats, html, crossref, cff ]
+        output:
+          - name: PDF (final)
+            arg: -p
+          - name: PDF (draft)
+            arg: -o pdf
+          - name: PDF (context)
+            arg: -o contextpdf
+          - name: LaTeX
+            arg: -o tex
+          - name: LaTeX (preprint)
+            arg: -o preprint
+          - name: Word DOCX
+            arg: -o docx
+          - name: JATS
+            arg: -o jats
+          - name: HTML
+            arg: -o html
+          - name: CrossRef
+            arg: -o crossref
+          - name: CFF
+            arg: -o cff
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4

@@ -81,6 +81,8 @@ jobs:
             echo "Moving $new_item"
             mv "$new_item" output/
           done
+      - name: Artifact Overview
+        run: tree output
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

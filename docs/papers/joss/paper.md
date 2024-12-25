@@ -72,17 +72,15 @@ or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.
 
 ## Math Equations
 
-Single dollars `$` are required for inline mathematics e.g. $f(x) = e^{\pi/x}$.
+For inline math, use single dollars `$`; for example $f(x) = e^{\pi/x}$.
+
+
 
 Double dollars make self-standing equations:
 
-$$\Theta(x) = \left\{\begin{array}{l}
-0\textrm{ if } x < 0\cr
-1\textrm{ else}
-\end{array}\right.\label{eq:theta}$$
+$$a^n + b^n = c^n \label{fermat}$$
 
-and references using \autoref{eq:theta} or \ref{eq:theta}.
-
+and references using \autoref{eq:fermat} or \ref{eq:fermat}.
 
 
 You can also use plain \LaTeX for equations:

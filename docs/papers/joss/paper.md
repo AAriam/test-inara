@@ -3,8 +3,9 @@ title: >-
     MyPackage: A Very Cool Python Application
 authors:
   - name: Jane Doe
-    orcid: 0000-0000-0000-0000
     affiliation: 1
+    orcid: 0000-0000-0000-0000
+    email: jane@doe.com
   - name: John L. Doe
     orcid: 0000-0000-0000-0001
     affiliation: [1, 2]
@@ -16,9 +17,26 @@ authors:
   - given-names: Ludwig
     dropping-particle: van
     surname: Beethoven
-    orcid: 0000-0000-0000-0003
+    suffix: Jr
     affiliation: 3
+    email: email@example.com
+    orcid: 0000-0000-0000-0003
     corresponding: true
+  - given-names: Ludwig
+    non-dropping-particle: van
+    surname: Beethoven
+    suffix: Jr
+    affiliation: 3
+    email: email1@example.com
+    orcid: 0000-0000-0000-0004
+  - name: Ludwig Beethoven
+    given-names: Ludwig
+    non-dropping-particle: van
+    surname: Beethoven
+    suffix: Jr
+    affiliation: 3
+    email: email2@example.com
+    orcid: 0000-0000-0000-0005
 affiliations:
   - index: 1
     name: Independent Researcher, Country

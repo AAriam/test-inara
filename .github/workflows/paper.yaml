@@ -26,8 +26,55 @@ on:
         type: string
 jobs:
   build:
-    name: Build
+    name: ${{ matrix.output.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        output:
+          - name: PDF (final)
+            arg: -p
+            paths:
+              - output: paper.pdf
+              - output: jats
+          - name: PDF (draft)
+            arg: -o pdf
+            paths:
+              - output: paper.pdf
+                renamed: draft.pdf
+          - name: PDF (context)
+            arg: -o contextpdf
+            paths:
+              - output: paper.context.pdf
+                renamed: context.pdf
+          - name: LaTeX
+            arg: -o tex
+            paths:
+              - output: paper.tex
+          - name: LaTeX (preprint)
+            arg: -o preprint
+            paths:
+              - output: paper.preprint.tex
+                renamed: draft.tex
+          - name: Word DOCX
+            arg: -o docx
+            paths:
+              - output: paper.docx
+          - name: HTML
+            arg: -o html
+            paths:
+              - output: paper.html
+                renamed: index.html
+              - output: media
+          - name: CrossRef
+            arg: -o crossref
+            paths:
+              - output: paper.crossref
+                renamed: crossref.xml
+          - name: CFF
+            arg: -o cff
+            paths:
+              - output: CITATION.cff
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
@@ -41,29 +88,13 @@ jobs:
           echo "DIRPATH=$dirpath" >> $GITHUB_ENV
       - name: Directory Overview
         run: tree $DIRPATH
-      - name: Output Files
-        run: |
-          output_files="CITATION.cff
-          paper.context.pdf context.pdf
-          paper.crossref crossref.xml
-          paper.docx
-          paper.html index.html
-          media
-          jats
-          paper.pdf draft.pdf
-          paper.preprint.tex draft.tex
-          paper.tex"
-          echo "$output_files"
-          {
-            echo 'OUTPUT_FILES<<EOF'
-            echo $output_files
-            echo EOF
-          } >> "$GITHUB_ENV"
       - name: Directory Cleanup
         run: |
-          while IFS=' ' read -r old_path new_path; do
-            rm -rf "$old_path" 2>/dev/null || echo "Path '$old_path' does not exist; skipping removal."
-          done <<< "$OUTPUT_FILES"
+          output_json='${{ toJSON(matrix.output) }}'
+          echo "$output_json" | jq -c '.paths[]' | while read -r path; do
+            output_path=$(echo "$path" | jq -r '.output')
+            rm -rf "$output_path" 2>/dev/null || echo "Path '$output_path' does not exist; skipping removal."
+          done
       - name: Directory Overview
         run: tree $DIRPATH
       - name: Journal Determination
@@ -73,34 +104,32 @@ jobs:
       - name: Build
         uses: docker://openjournals/inara:latest
         with:
-          args: -o pdf,contextpdf,tex,preprint,docx,html,crossref,cff ${{ inputs.filepath }}
+          args: ${{ matrix.output.arg }} ${{ inputs.filepath }}
       - name: Output Rename
         run: |
-          while IFS=' ' read -r old_path new_path; do
-            if [[ -n "$old_path" && -n "$new_path" ]]; then
-              echo "Renaming $old_path to $new_path"
-              mv "$old_path" "$new_path" 2>/dev/null || echo "Failed to rename $old_path"
+          output_json='${{ toJSON(matrix.output) }}'
+          echo "$output_json" | jq -c '.paths[]' | while read -r path; do
+            if echo "$path" | jq -e 'has("renamed")' >/dev/null; then
+              output_path=$(echo "$path" | jq -r '.output')
+              new_path=$(echo "$path" | jq -r '.renamed')
+              echo "Renaming '$output_path' to '$new_path'"
+              mv "$output_path" "$new_path" 2>/dev/null || echo "Failed to rename $output_path"
             fi
-          done <<< "$OUTPUT_FILES"
+          done
       - name: Directory Overview
         run: tree $DIRPATH
-      - name: Production Build
-        uses: docker://openjournals/inara:latest
-        with:
-          args: -p ${{ inputs.filepath }}
-      - name: Directory Overview
-        run: tree $dirpath
       - name: Artifact Generation
         run: |          
           upload_paths=""
-          while IFS=' ' read -r old_path new_path; do
-            if [[ -n "$new_path" ]]; then
-              upload_paths+="$new_path"$'\n'
+          output_json='${{ toJSON(matrix.output) }}'
+          echo "$output_json" | jq -c '.paths[]' | while read -r path; do
+            if echo "$path" | jq -e 'has("renamed")' >/dev/null; then
+              upload_path=$(echo "$path" | jq -r '.renamed')
             else
-              upload_paths+="$old_path"$'\n'
+              upload_path=$(echo "$path" | jq -r '.output')
             fi
-          done <<< "$OUTPUT_FILES"
-          upload_paths+="paper.pdf"$'\n'
+            upload_paths+="$upload_path"$'\n'
+          done
           {
             echo 'UPLOAD_PATHS<<EOF'
             echo $upload_paths
@@ -111,3 +140,4 @@ jobs:
         with:
           name: paper
           path: ${{ env.UPLOAD_PATHS }}
+          

@@ -136,6 +136,7 @@ jobs:
             echo $upload_paths
             echo EOF
           } >> "$GITHUB_ENV"
+      - run: echo "${{ env.UPLOAD_PATHS }}"
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

@@ -74,11 +74,11 @@ or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.
 
 For inline math, use single dollars `$`; for example $f(x) = e^{\pi/x}$.
 
-
+For block math, use '
 
 Double dollars make self-standing equations:
 
-$$a^n + b^n = c^n \label{fermat}$$
+$$a^n + b^n = c^n \label{eq:fermat}$$
 
 and references using \autoref{eq:fermat} or \ref{eq:fermat}.
 

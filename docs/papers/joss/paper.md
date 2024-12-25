@@ -60,7 +60,37 @@ should not be in the paper and instead should be outlined in the software docume
 A Statement of need section that clearly illustrates the research purpose
 of the software and places it in the context of related work.
 
-# Other Section
+# Other Sections
+
+Other than a **Summary** and a **Statement of Need** section,
+your paper can also contain other main sections and sub-sections.
+
+## Markdown
+
+Links can be used like [this](https://example.com).
+
+### Inline Markup
+
+Inline markup in Markdown should be semantic, not presentations.
+It can be used to make *italic*, **bold**, ~~strikethrough~~, ~sub~script, ^super^script,
+[underline]{.ul}, [Small Caps]{.sc}, and `inline code`.
+
+### Lists
+
+- apples
+- citrus fruits
+  - lemons
+  - oranges
+
+### Ordered Lists
+
+0. If two systems are each in thermal equilibrium with a third, they are
+   also in thermal equilibrium with each other.
+1. In a process without transfer of matter, the change in internal
+   energy, $\Delta U$, of a thermodynamic system is equal to the energy
+   gained as heat, $Q$, less the thermodynamic work, $W$, done by the
+   system on its surroundings. $$\Delta U = Q - W$$
+
 
 ## Figures
 

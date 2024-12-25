@@ -146,7 +146,9 @@ jobs:
           - ${{ inputs.ref || github.ref }}
           - ${{ inputs.filepath }}
           - ${{ inputs.journal }}"
+          
           name_normalized=$(echo "$name" | tr '":<>|*?\/' '-')
+          
           echo "artifact_base_name=$name_normalized" >> $GITHUB_OUTPUT
       - name: Upload
         uses: actions/upload-artifact@v4

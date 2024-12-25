@@ -26,55 +26,46 @@ on:
         type: string
 jobs:
   build:
-    name: ${{ matrix.output.name }}
+    name: Build
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        output:
-          - name: PDF (final)
-            arg: -p
-          - name: PDF (draft)
-            arg: -o pdf
-          - name: PDF (context)
-            arg: -o contextpdf
-          - name: LaTeX
-            arg: -o tex
-          - name: LaTeX (preprint)
-            arg: -o preprint
-          - name: Word DOCX
-            arg: -o docx
-          - name: JATS
-            arg: -o jats
-          - name: HTML
-            arg: -o html
-          - name: CrossRef
-            arg: -o crossref
-          - name: CFF
-            arg: -o cff
     steps:
       - name: Repository Checkout
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.repository || github.repository }}
           ref: ${{ inputs.ref || github.ref }}
-          path: repo
       - name: Directory Location
-        id: loc
         run: |
           dirpath=$(dirname "${{ inputs.filepath }}")
           echo "$dirpath"
-          echo "dirpath=$dirpath" >> $GITHUB_ENV
-      - name: Directory Pre-Scan
-        id: state-before
+          echo "DIRPATH=$dirpath" >> $GITHUB_ENV
+      - name: Directory Overview
+        run: tree $DIRPATH
+      - name: Output Files
         run: |
-          files_before=$(find "repo/$dirpath")
-          echo "$files_before"
+          output_files="CITATION.cff
+          paper.context.pdf context.pdf
+          paper.crossref crossref.xml
+          paper.docx
+          paper.html index.html
+          media
+          jats
+          paper.pdf draft.pdf
+          paper.preprint.tex draft.tex
+          paper.tex"
+          echo "$output_files"
           {
-            echo 'files_before<<EOF'
-            echo $files_before
+            echo 'OUTPUT_FILES<<EOF'
+            echo $output_files
             echo EOF
           } >> "$GITHUB_ENV"
+      - name: Directory Cleanup
+        run: |
+          while IFS=' ' read -r old_path new_path; do
+            rm -rf "$old_path" 2>/dev/null || echo "Path '$old_path' does not exist; skipping removal."
+          done <<< "$OUTPUT_FILES"
+      - name: Directory Overview
+        run: tree $DIRPATH
       - name: Journal Determination
         run: |
           journal=$(echo "${{ inputs.journal }}" | tr '[:upper:]' '[:lower:]' | tr -d ' ')
@@ -82,65 +73,41 @@ jobs:
       - name: Build
         uses: docker://openjournals/inara:latest
         with:
-          args: ${{ matrix.output.arg }} repo/${{ inputs.filepath }}
-      - name: Directory Post-Scan
-        id: state-after
+          args: -o pdf,contextpdf,tex,preprint,docx,html,crossref,cff ${{ inputs.filepath }}
+      - name: Output Rename
         run: |
-          files_after=$(find "repo/$dirpath")
-          echo "$files_after"
-          {
-            echo 'files_after<<EOF'
-            echo $files_after
-            echo EOF
-          } >> "$GITHUB_ENV"
-      - name: Output Identification
-        run: |
-          before=($files_before)
-          after=($files_after)
-          output_paths=""
-          for item in "${after[@]}"; do
-            if [[ ! " ${before[@]} " =~ " $item " ]]; then
-              output_paths+="$item"$'\n'
+          while IFS=' ' read -r old_path new_path; do
+            if [[ -n "$old_path" && -n "$new_path" ]]; then
+              echo "Renaming $old_path to $new_path"
+              mv "$old_path" "$new_path" 2>/dev/null || echo "Failed to rename $old_path"
             fi
-          done
-          echo "$output_paths"
-          {
-            echo 'output_paths<<EOF'
-            echo $output_paths
-            echo EOF
-          } >> "$GITHUB_ENV"
+          done <<< "$OUTPUT_FILES"
+      - name: Directory Overview
+        run: tree $DIRPATH
+      - name: Production Build
+        uses: docker://openjournals/inara:latest
+        with:
+          args: -p ${{ inputs.filepath }}
+      - name: Directory Overview
+        run: tree $dirpath
       - name: Artifact Generation
         run: |          
-          mkdir -p output
-          sudo chown -R runner:docker "repo/$dirpath"
-          output_paths=($output_paths)
-          for new_item in "${output_paths[@]}"; do
-            # Check if the parent directory has already been moved
-            if [[ ! -e "$new_item" ]]; then
-              echo "Skipping $new_item: already moved as part of its parent directory."
-              continue
+          upload_paths=""
+          while IFS=' ' read -r old_path new_path; do
+            if [[ -n "$new_path" ]]; then
+              upload_paths+="$new_path"$'\n'
+            else
+              upload_paths+="$old_path"$'\n'
             fi
-            echo "Moving $new_item"
-            mv "$new_item" output/
-          done
-      - name: Artifact Overview
-        run: tree output
+          done <<< "$OUTPUT_FILES"
+          upload_paths+="paper.pdf"$'\n'
+          {
+            echo 'UPLOAD_PATHS<<EOF'
+            echo $upload_paths
+            echo EOF
+          } >> "$GITHUB_ENV"
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: paper-${{matrix.output.name}}
-          path: output
-      
-  wheel-merge:
-    name: Artifact Merge
-    if: ${{ !cancelled() }}
-    needs: [ build ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Merge
-        uses: actions/upload-artifact/merge@v4
-        with:
           name: paper
-          pattern: paper-*
-          separate-directories: 'true'
-          delete-merged: 'true'
+          path: ${{ env.UPLOAD_PATHS }}

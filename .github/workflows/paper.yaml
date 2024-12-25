@@ -147,3 +147,22 @@ jobs:
             - ${{ inputs.journal }}
             - ${{ matrix.output.name }}
           path: ${{ env.UPLOAD_PATHS }}
+  wheel-merge:
+    name: Artifact Merge
+    if: ${{ !cancelled() }}
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Merge
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: paper
+          pattern: >-
+            paper
+            - ${{ inputs.repository || github.repository }}
+            - ${{ inputs.ref || github.ref }}
+            - ${{ inputs.filepath }}
+            - ${{ inputs.journal }}
+            - *
+          separate-directories: 'false'
+          delete-merged: 'true'

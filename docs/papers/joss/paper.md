@@ -65,6 +65,11 @@ of the software and places it in the context of related work.
 Other than a **Summary** and a **Statement of Need** section,
 your paper can also contain other main sections and sub-sections.
 
+## Citations
+
+Citations can be used like this [@michaud-agrawal2011mdanalysis] [@oliver_beckstein-proc-scipy-2016] [@alibay2023building],
+or this [@pedregosa2011scikitlearn], or this @pedregosa2011scikitlearn.
+
 ## Markdown
 
 Links can be used like [this](https://example.com).
@@ -103,25 +108,6 @@ Figures can be included like this:
 ![This is the caption of the figure.\label{fig:example}](../full_light.png){ width=50% }
 
 and referenced from text using \autoref{fig:example} or \ref{fig:example}.
-
-### Grid Tables
-
-You can include grid tables like this:
-
-+-------------------+------------+----------+----------+
-| Header 1          | Header 2   | Header 3 | Header 4 |
-|                   |            |          |          |
-+:=================:+:==========:+:========:+:========:+
-| row 1, column 1   | column 2   | column 3 | column 4 |
-+-------------------+------------+----------+----------+
-| row 2             | cells span columns               |
-+-------------------+------------+---------------------+
-| row 3             | cells      | - body              |
-+-------------------+ span rows  | - elements          |
-| row 4             |            | - here              |
-+===================+============+=====================+
-| Footer                                               |
-+===================+============+=====================+
 
 
 ### Footnotes

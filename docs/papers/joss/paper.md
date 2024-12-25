@@ -77,22 +77,17 @@ Single dollars `$` are required for inline mathematics e.g. $f(x) = e^{\pi/x}$.
 Double dollars make self-standing equations:
 
 $$
-\label{eq:theta}
 \Theta(x) = \left\{\begin{array}{l}
 0\textrm{ if } x < 0\cr
 1\textrm{ else}
 \end{array}
 \right.
+\label{eq:theta}
 $$
 
 and references using \autoref{eq:theta} or \ref{eq:theta}.
 
-Authors who do not wish to include the label directly in the formula
-can use a Markdown span to add the label:
 
-[$$a^n + b^n = c^n$$]{label="eq:fermat"}
-
-These can be referenced the same using \autoref{eq:fermat} or \ref{eq:fermat}.
 
 You can also use plain \LaTeX for equations:
 

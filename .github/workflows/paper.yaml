@@ -151,7 +151,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.articat-name-gen.outputs.artifact_base_name }} - ${{ matrix.output.name }}
+          name: ${{ steps.artifact-name-gen.outputs.artifact_base_name }} - ${{ matrix.output.name }}
           path: ${{ env.UPLOAD_PATHS }}
   wheel-merge:
     name: Artifact Merge

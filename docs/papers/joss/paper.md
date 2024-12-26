@@ -4,15 +4,16 @@ title: >-
 authors:
   - name: Jane Doe
     affiliation: 1
-    orcid: 0000-0000-0000-0000
+    orcid: 0000-0000-0000-0001
     email: jane@doe.com
+    corresponding: true
   - name: John L. Doe
     orcid: 0000-0000-0000-0001
-    affiliation: [1, 2]
+    affiliation: [ 1, 2 ]
     equal-contrib: true
   - name: John Smith
-    orcid: 0000-0000-0000-0002
-    affiliation: [2, 3]
+    orcid: 0000-0000-0000-0001
+    affiliation: [ 2, 3 ]
     equal-contrib: true
   - given-names: Ludwig
     dropping-particle: van
@@ -20,7 +21,7 @@ authors:
     suffix: Jr
     affiliation: 3
     email: email@example.com
-    orcid: 0000-0000-0000-0003
+    orcid: 0000-0000-0000-0001
     corresponding: true
   - given-names: Ludwig
     non-dropping-particle: van
@@ -28,7 +29,7 @@ authors:
     suffix: Jr
     affiliation: 3
     email: email1@example.com
-    orcid: 0000-0000-0000-0004
+    orcid: 0000-0000-0000-0001
   - name: Ludwig Beethoven
     given-names: Ludwig
     non-dropping-particle: van
@@ -36,7 +37,7 @@ authors:
     suffix: Jr
     affiliation: 3
     email: email2@example.com
-    orcid: 0000-0000-0000-0005
+    orcid: 0000-0000-0000-0001
 affiliations:
   - index: 1
     name: Independent Researcher, Country
@@ -49,6 +50,8 @@ tags:
   - first keyword
   - second keyword
   - third keyword
+software_repository_url: https://github.com/repodynamics/pypackit
+archive_doi: 10.5281/zenodo.12345678
 date: 11 November 2024
 bibliography: ../paper.bib
 ---
@@ -129,10 +132,26 @@ It can be used to make *italic*, **bold**, ~~strikethrough~~, ~sub~script, ^supe
    gained as heat, $Q$, less the thermodynamic work, $W$, done by the
    system on its surroundings. $$\Delta U = Q - W$$
 
+
+### Tables
+
+Read the [pandoc manual](https://pandoc.org/MANUAL.html#tables) for more details.
+
+Tables can be given captions like this:
+
+: This is the caption of the table;
+  it must start with a colon and be separated from the table by one empty line.\label{tab:example}
+
+| Header 1      | Header 2      |
+|---------------|---------------|
+| Row 1, Cell 1 | Row 1, Cell 2 |
+| Row 2, Cell 1 | Row 2, Cell 2 |
+
+and referenced from text using \autoref{tab:example} or \ref{tab:example}.
+
 ### Inline Images
 
 Inline images can be used like this ![](../full_light.png){height="9pt"} inside a paragraph.
-
 
 ### Figures
 
@@ -144,10 +163,13 @@ and referenced from text using \autoref{fig:example} or \ref{fig:example}.
 
 ### Code Blocks
 
-```python
+Read the [pandoc manual](https://pandoc.org/MANUAL.html#verbatim-code-blocks) for more details.
+
+```{.python .numberLines}
 def f(x):
     return x
 ```
+
 
 ### Footnotes
 

@@ -2,7 +2,7 @@
 #   https://github.com/openjournals/inara
 #   https://github.com/openjournals/openjournals-draft-action
 
-name: Open Journals Paper Build
+name: Paper Build (Open Journals)
 run-name: >-
   Paper (${{ inputs.journal }}):
   ${{ inputs.repository || github.repository }}/${{ inputs.ref || github.ref }}/${{ inputs.filepath }}
@@ -26,15 +26,17 @@ on:
       artifact:
         description: >-
           Artifact name
-          (defaults `paper - REPO-OWNER_REPO-NAME - BRANCH-NAME - TAG - DISTANCE - COMMIT-HASH - FILEPATH - JOURNAL`)
+          (default: 'paper - REPO-OWNER_REPO-NAME - BRANCH-NAME - TAG - DISTANCE - COMMIT-HASH - FILEPATH - JOURNAL')
         required: false
         type: string
       ref:
-        description: Git reference (defaults to the HEAD of the branch from which the workflow is run)
+        description: >-
+          Git reference (default: HEAD of the branch from which the workflow is run)
         required: false
         type: string
       repository:
-        description: GitHub repository (defaults to the current repository)
+        description: >-
+          GitHub repository (default: current repository)
         required: false
         type: string
 jobs:

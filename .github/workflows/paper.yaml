@@ -1,3 +1,7 @@
+# Refs:
+#   https://github.com/openjournals/inara
+#   https://github.com/openjournals/openjournals-draft-action
+
 name: Open Journals Paper Build
 run-name: >-
   Paper (${{ inputs.journal }}):
@@ -10,11 +14,6 @@ on:
         required: true
         type: string
         default: docs/papers/joss/paper.md
-      metadata:
-        description: Path to the paper's metadata file
-        required: true
-        type: string
-        default: docs/papers/joss/metadata.yaml
       journal:
         description: Target journal
         required: true
@@ -25,15 +24,17 @@ on:
           - JOSE
           - ReScience C
       artifact:
-        description: Artifact name
+        description: >-
+          Artifact name
+          (defaults `paper - REPO-OWNER_REPO-NAME - BRANCH-NAME - TAG - DISTANCE - COMMIT-HASH - FILEPATH - JOURNAL`)
         required: false
         type: string
       ref:
-        description: Git reference
+        description: Git reference (defaults to the HEAD of the branch from which the workflow is run)
         required: false
         type: string
       repository:
-        description: GitHub repository
+        description: GitHub repository (defaults to the current repository)
         required: false
         type: string
 jobs:
@@ -107,7 +108,7 @@ jobs:
           output_json='${{ toJSON(matrix.output) }}'
           echo "$output_json" | jq -c '.paths[]' | while read -r path; do
             output_path=$(echo "$path" | jq -r '.output')
-            rm -rf "${DIRPATH}/${output_path}" 2>/dev/null || echo "Path '${DIRPATH}/${output_path}' does not exist; skipping removal."
+            rm -rf "${DIRPATH}/${output_path}" 2>/dev/null || echo "Removal of '${DIRPATH}/${output_path}' failed."
           done
       - name: Directory Overview
         run: tree $DIRPATH
@@ -117,8 +118,7 @@ jobs:
           echo "$journal"
           echo "JOURNAL=$journal" >> $GITHUB_ENV
       - name: Build
-        uses: docker://openjournals/inara:latest  # https://github.com/openjournals/inara
-                                                  # https://github.com/openjournals/openjournals-draft-action
+        uses: docker://openjournals/inara:latest
         with:
           args: ${{ matrix.output.arg }} -v ${{ inputs.filepath }}
       - name: Output Rename
